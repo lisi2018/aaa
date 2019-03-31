@@ -1,0 +1,31 @@
+﻿vim ss.sh
+
+***************************************************
+
+#!/bin/bash
+yum -y install epel-release
+yum update
+yum -y install python-setuptools m2crypto supervisor
+easy_install pip
+pip install shadowsocks
+echo '{
+"server":"0.0.0.0",
+"server_port":88, 
+"local_port":1080,
+"password":"fuckyouman",
+"timeout":600,
+"method":"rc4-md5"
+}' > /etc/shadowsocks.json
+echo '[program:shadowsocks]
+command=ssserver -c /etc/shadowsocks.json
+autostart=true
+autorestart=true
+user=root
+log_stderr=true
+logfile=/var/log/shadowsocks.log' >> /etc/supervisord.conf
+echo service supervisord start >> /etc/rc.local
+ssserver -c /etc/shadowsocks.json -d start
+
+*********************************************
+
+bash ss.sh
